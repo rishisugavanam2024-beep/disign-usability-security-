@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SafeRevoke Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>SafeRevoke</h1>
+        <p class="lede">Find what breaks, what survives, and which dangerous fallback appears before changing real access.</p>
+      </div>
+      <button id="analyze">Analyze all permissions</button>
+    </header>
+
+    <section class="panel intro">
+      <div><span>Environment</span><strong>Local synthetic lab</strong></div>
+      <div><span>Production access</span><strong class="good">Blocked by design</strong></div>
+      <div><span>Test data</span><strong>Fake company records</strong></div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-title">
+      <div class="section-heading">
+        <div><h2 id="demo-title">Demonstrate a permission denial</h2></div>
+        <p>Choose one permission. SafeRevoke runs every task before and after denying it in the test copy.</p>
+      </div>
+      <div class="panel denial-console">
+        <div class="denial-controls">
+          <label for="permission-select">Permission to deny</label>
+          <select id="permission-select" aria-describedby="permission-detail"></select>
+          <small id="permission-detail">Select a permission to see its protected resource.</small>
+          <button id="simulate">Simulate denial</button>
+        </div>
+        <div id="simulation-placeholder" class="simulation-placeholder">
+          <strong>No permission has been denied yet</strong>
+          <span>Results will show the normal path, denied attempt and after-denial path for every task.</span>
+        </div>
+        <div id="simulation-result" class="hidden" aria-live="polite">
+          <div class="denial-banner">
+            <div>
+              <span>Denied in test copy</span>
+              <strong id="denied-permission"></strong>
+            </div>
+            <span id="simulation-classification" class="badge"></span>
+          </div>
+          <p id="simulation-reason" class="simulation-reason"></p>
+          <div class="trace-head" aria-hidden="true">
+            <span>Task</span><span>Before denial</span><span>After denial</span><span>Result</span>
+          </div>
+          <div id="workflow-comparison" class="workflow-comparison"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div><h2>Test-company tasks</h2></div>
+        <p>These fake tasks give the permission test something safe and repeatable to run.</p>
+      </div>
+      <div id="workflows" class="grid"></div>
+    </section>
+
+    <section id="results" class="hidden">
+      <div class="section-heading">
+        <div><h2>All-permission analysis</h2></div>
+        <p id="method"></p>
+      </div>
+      <div id="summary" class="summary"></div>
+      <div class="panel benchmark-panel">
+        <h3>Comparison across three test applications</h3>
+        <p id="comparison"></p>
+        <div id="benchmark-apps" class="summary"></div>
+        <small id="benchmark-warning"></small>
+      </div>
+      <div class="two-column">
+        <div class="panel">
+          <h3>Single-grant experiments</h3>
+          <div id="experiments"></div>
+        </div>
+        <div class="panel">
+          <h3>Adaptive removal-order plans</h3>
+          <div id="plans"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+services:
+  saferevoke:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped
+    mem_limit: 384m
+
