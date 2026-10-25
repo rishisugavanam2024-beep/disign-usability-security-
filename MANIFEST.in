@@ -1,0 +1,11 @@
+include README.md PACKAGE_README.md pyproject.toml
+include LICENSE CHANGELOG.md
+include app.py Dockerfile compose.yaml requirements.txt requirements-django.txt
+recursive-include saferevoke *.py
+recursive-include docs *.md
+recursive-include examples *.py *.json
+recursive-include tests *.py
+recursive-include templates *.html
+recursive-include static *.js *.css
+global-exclude *.py[cod]
+global-exclude __pycache__

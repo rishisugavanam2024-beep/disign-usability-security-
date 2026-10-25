@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "saferevoke"
+version = "0.1.0a1"
+description = "Experimental permission-removal testing for Python applications"
+readme = "PACKAGE_README.md"
+requires-python = ">=3.10"
+dependencies = []
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["django", "pytest", "permissions", "authorization", "security", "testing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Pytest",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+    "Topic :: Software Development :: Testing",
+]
+
+[project.optional-dependencies]
+pytest = ["pytest>=8,<10", "pytest-django>=4.8,<5", "Django>=5.2,<5.3"]
+web = ["Flask==3.1.2"]
+
+[project.entry-points.pytest11]
+saferevoke = "saferevoke.pytest_plugin"
+
+[project.urls]
+Repository = "https://github.com/rishisugavanam2024-beep/disign-usability-security-"
+Documentation = "https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/pytest-integration.md"
+Issues = "https://github.com/rishisugavanam2024-beep/disign-usability-security-/issues"
+
+[tool.setuptools.packages.find]
+include = ["saferevoke*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

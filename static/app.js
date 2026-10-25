@@ -107,9 +107,15 @@ document.querySelector("#simulate").addEventListener("click", async (event) => {
 
 function renderAnalysis(data) {
   const comparison = data.comparative_benchmark;
+  const coverage = data.coverage;
+  document.querySelector("#coverage").textContent =
+    `${coverage.executed_workflows.length} configured tasks executed; ${coverage.baseline_exercised_grants.length}/${coverage.configured_grants} permissions used in the baseline. Unexercised permissions: ${coverage.baseline_unexercised_grants.join(", ") || "none"}. ${coverage.owner_checked_workflows.length} tasks have owner-defined output or side-effect checks. ${coverage.scope}`;
   document.querySelector("#results").classList.remove("hidden");
   document.querySelector("#method").textContent =
-    `${data.method.single_tests} single tests; ${data.method.ordered_sequence_tests} ordered interaction tests. Synthetic benchmark: ${(data.benchmark.recall * 100).toFixed(0)}% planted-interaction recall with ${(data.benchmark.experiment_reduction * 100).toFixed(1)}% fewer experiments than exhaustive ordered-pair testing.`;
+    `${data.method.single_tests} single tests; ${data.method.ordered_sequence_tests} ordered interaction tests. ` +
+    (data.benchmark.expected_total
+      ? `Synthetic benchmark: ${(data.benchmark.recall * 100).toFixed(0)}% planted-interaction recall with ${(data.benchmark.experiment_reduction * 100).toFixed(1)}% fewer experiments than exhaustive ordered-pair testing.`
+      : "No planted-interaction oracle was configured for this application; recall is not measured.");
 
   document.querySelector("#summary").innerHTML = Object.entries(names).map(([key, label]) => `
     <div class="summary-card ${badgeClass(key)}"><span>${label}</span><strong>${data.summary[key] || 0}</strong></div>

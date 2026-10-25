@@ -1,5 +1,11 @@
 # SafeRevoke
 
+Licensed under the [MIT License](LICENSE).
+
+The installable `0.1.0a1` release candidate and publishing workflow are prepared.
+See [publishing instructions](docs/publishing.md) for the one-time PyPI account
+setup and final upload; GitHub availability alone does not mean it is on PyPI.
+
 SafeRevoke is a software-only research prototype for testing permission removal before a change reaches production. It includes a synthetic company portal, fake identities and data paths, an execution-based classifier, and an adaptive removal-order planner.
 
 ## What is implemented
@@ -17,6 +23,31 @@ The included benchmark plants five interactions across a company portal, inciden
 
 The research contribution to investigate is the combination of runtime fallback discovery with adaptive, sequence-aware permission-removal experiments. The implementation is a prototype, not evidence that the mechanism is patentable.
 
+## Run your existing Django tests with permission removal
+
+The repository now builds an installable Python package with an opt-in pytest
+plugin. Install locally with `python -m pip install ".[pytest]"`. Ordinary test
+runs remain unchanged. To repeat selected tests under a real group-grant removal:
+
+```powershell
+python -m pytest tests/test_refunds.py --ds=myproject.test_settings --saferevoke --saferevoke-deny group:refund_operators:orders.approve_refund
+```
+
+Replace the illustrative test path, settings module and grant with your project's
+own values. Test functions use their existing fixtures and assertions; they do
+not need SafeRevoke workflow wrappers. HTML/JSON reports show baseline results,
+failed assertions, remaining access and permission traces. The package has not
+been published to PyPI.
+
+See the [pytest integration guide](docs/pytest-integration.md) for a runnable
+four-test example, installation, report interpretation and current limitations.
+
+Add `--saferevoke-selection affected` to build a fresh baseline permission-to-test
+map and omit unrelated mutation variants before fixture setup. The admin example
+executes 13 test bodies instead of 16 while retaining the same three detected
+failures. Empty/uncertain traces stay selected. Full mode remains the default;
+selection only covers observed baseline paths, not all possible dependencies.
+
 ## Run locally
 
 ```powershell
@@ -26,6 +57,72 @@ python -m venv .venv
 ```
 
 Open <http://localhost:5000>.
+
+## SDK foundations and shared-access demonstration
+
+The engine now accepts an `ApplicationAdapter`, data-only JSON configuration,
+owner-defined output/side-effect checks, baseline coverage and HTML/JSON exports.
+These are local integration foundations; an installable distribution and adapters
+for external authorization systems are still future work.
+
+To show one permission affecting two different services, stop the existing server,
+then run in PowerShell:
+
+```powershell
+$env:SAFEREVOKE_CONFIG = "examples/shared_access.json"
+.\.venv\Scripts\python.exe app.py
+```
+
+Select `g_inventory_read` and simulate denial. Both **Check product stock** and
+**Check shipping availability** fail because their identities inherit the same
+`stock_reader` permission. **Save order** remains successful. Its order write
+also demonstrates state restoration: each experiment creates exactly one order,
+then restores the initial state so subsequent tests start cleanly.
+
+To return to the original company demo, stop the server and run:
+
+```powershell
+Remove-Item Env:SAFEREVOKE_CONFIG -ErrorAction SilentlyContinue
+.\.venv\Scripts\python.exe app.py
+```
+
+After **Analyze all permissions**, coverage and report download links appear.
+Direct download endpoints: `/api/report/html` and `/api/report/json`. Each download
+runs a fresh analysis; JSON contains the baseline and per-mutation workflow traces.
+
+For a Python integration, register approved workflow functions explicitly:
+
+```python
+from saferevoke.config import load_lab
+from saferevoke.engine import SafeRevokeEngine
+from saferevoke.report import render_html
+from saferevoke.shared_example import RUNNERS
+
+lab = load_lab("examples/shared_access.json", RUNNERS)
+report = SafeRevokeEngine(lab).analyze()
+print(report["coverage"])
+```
+
+See [integration guide](docs/integration.md) for the adapter contract and limits.
+
+## Real Django authorization integration
+
+An optional Django adapter now discovers actual user/group grants, removes real
+permission assignments, traces Django's backend decisions and rolls back the
+database after each workflow. Its demonstration exercises Django's unmodified
+built-in admin views using controlled staff accounts and an in-memory SQLite DB.
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-django.txt
+.\.venv\Scripts\python.exe -m examples.django_admin.run --output reports/django-admin
+```
+
+Open `reports/django-admin/report.html` for the report; `evidence.json` includes
+before/after traces. Verified outcomes include a shared permission blocking two
+staff users, remaining group access after direct-grant removal, blocked group
+creation, and database restoration even on workflow exceptions. This integration
+does not yet validate a credential fallback in an independent business application.
+See [Django integration instructions and compatibility](docs/django-integration.md).
 
 ## Run with Docker
 
@@ -45,7 +142,10 @@ The container is capped at 384 MB. Open <http://localhost:5000>. Stop it with `d
 
 The demo portal is the system under test. It intentionally contains four realistic authorization behaviors: a privileged fallback, a genuinely required permission, duplicate direct/role access, and a queued operation that outlives revocation. This is safer and more reproducible than probing a public website.
 
-An eventual staging-system adapter would need to supply: a permission mutation interface, approved workflow scripts, an execution trace collector, output checks and a reset operation. Production mutation is intentionally outside this prototype.
+The adapter interface now defines snapshot, deny, run and restore operations.
+The included adapter implements these for in-memory permissions and Python data.
+Adapters for databases, cloud IAM and external application state still need to be
+implemented and validated before those systems can be tested.
 
 ## Research foundations
 

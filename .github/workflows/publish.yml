@@ -1,0 +1,58 @@
+name: Validate and publish SafeRevoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to PyPI after the trusted publisher is configured
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: saferevoke-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test and packaging tools
+        run: python -m pip install ".[pytest,web]" build twine
+      - name: Run verification tests
+        run: python -m unittest discover -s tests -v
+      - name: Build wheel and source archive
+        run: python -m build
+      - name: Check package metadata and description
+        run: python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish == true
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/saferevoke/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - name: Publish using PyPI trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1

@@ -31,6 +31,8 @@ button.secondary { background: transparent; color: var(--text); border: 1px soli
 .intro div { display: flex; flex-direction: column; gap: 8px; }
 .intro span, small { color: var(--muted); }
 .good { color: var(--green); }
+a { color: var(--blue); text-underline-offset: 3px; }
+a:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .demo-section { margin-bottom: 70px; }
 .denial-console { padding: 24px; }
 .denial-controls { display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 9px 16px; align-items: end; }

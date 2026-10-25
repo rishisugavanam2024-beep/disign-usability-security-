@@ -39,6 +39,8 @@ class WorkflowRun:
     output: str
     events: list[AccessEvent]
     message: str
+    side_effects: dict = field(default_factory=dict)
+    validation_errors: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -47,6 +49,8 @@ class WorkflowRun:
             "output": self.output,
             "events": [event.to_dict() for event in self.events],
             "message": self.message,
+            "side_effects": self.side_effects,
+            "validation_errors": self.validation_errors,
         }
 
 
@@ -59,6 +63,8 @@ class Workflow:
     name: str
     description: str
     runner: WorkflowRunner
+    expected_output: str | None = None
+    expected_side_effects: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -121,6 +127,7 @@ class ExecutionContext:
         self.workflow_id = workflow_id
         self.policy = policy
         self.events: list[AccessEvent] = []
+        self.state: dict = {}
 
     def access(
         self,

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "grants": [
+    {"id": "g_inventory_read", "principal": "stock_reader", "principal_type": "role", "probe_identity": "shop_service", "resource": "inventory", "action": "read", "description": "Shared inventory read permission for shop and shipping"},
+    {"id": "g_order_write", "principal": "shop_service", "principal_type": "identity", "probe_identity": "shop_service", "resource": "orders", "action": "write", "description": "Save customer orders"},
+    {"id": "g_old_export", "principal": "former_worker", "principal_type": "identity", "probe_identity": "former_worker", "resource": "archive", "action": "read", "description": "Unexercised archive access"}
+  ],
+  "roles": {"shop_service": ["stock_reader"], "shipping_service": ["stock_reader"]},
+  "capability_universe": [["inventory", "read"], ["orders", "write"], ["archive", "read"]],
+  "action_weights": {"read": 1, "write": 3},
+  "workflows": [
+    {"id": "check_stock", "name": "Check product stock", "description": "Shop service reads shared inventory.", "runner": "check_stock", "expected_output": "stock:12"},
+    {"id": "shipping_quote", "name": "Check shipping availability", "description": "Shipping service reads the same inventory using the shared role.", "runner": "shipping_quote", "expected_output": "shipping:available"},
+    {"id": "save_order", "name": "Save order", "description": "Writes one order and validates its side effect; restored after each test.", "runner": "save_order", "expected_output": "order:saved", "expected_side_effects": {"orders_created": 1}}
+  ]
+}

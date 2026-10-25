@@ -3,7 +3,9 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import asdict
 from itertools import combinations
+from threading import RLock
 
+from saferevoke.adapter import ApplicationAdapter, InMemoryAdapter
 from saferevoke.model import AccessEvent, ExecutionContext, Grant, Lab, Policy, WorkflowRun
 
 
@@ -25,15 +27,40 @@ class SafeRevokeEngine:
     adaptive interaction testing (only explore pairs revealed by a changed path).
     """
 
-    def __init__(self, lab: Lab):
+    def __init__(self, lab: Lab, adapter: ApplicationAdapter | None = None):
         self.lab = lab
+        self.adapter = adapter if adapter is not None else InMemoryAdapter(lab)
+        self._execution_lock = RLock()
 
     def _run_all(self, removed: set[str]) -> dict[str, WorkflowRun]:
-        policy = Policy(self.lab, removed)
         runs: dict[str, WorkflowRun] = {}
-        for workflow in self.lab.workflows.values():
-            context = ExecutionContext(workflow.id, policy)
-            runs[workflow.id] = workflow.runner(context)
+        with self._execution_lock:
+            for workflow in self.lab.workflows.values():
+                snapshot = self.adapter.snapshot()
+                try:
+                    self.adapter.deny(set(removed))
+                    run = self.adapter.run(workflow)
+                    if run.workflow_id != workflow.id:
+                        raise ValueError("Adapter returned the wrong workflow trace")
+                    errors = list(run.validation_errors)
+                    if workflow.expected_output is not None and run.output != workflow.expected_output:
+                        errors.append("Output does not match the approved expected output")
+                    for key, expected in workflow.expected_side_effects.items():
+                        if key not in run.side_effects or run.side_effects[key] != expected:
+                            errors.append(f"Side effect does not match: {key}")
+                    run.validation_errors = errors
+                    run.success = run.success and not errors
+                    runs[workflow.id] = run
+                finally:
+                    # Cleanup failure propagates: never continue using uncertain state.
+                    self.adapter.restore(snapshot)
+        return runs
+
+    def _baseline(self) -> dict[str, WorkflowRun]:
+        runs = self._run_all(set())
+        failed = [key for key, run in runs.items() if not run.success]
+        if failed:
+            raise ValueError(f"Baseline workflows must pass before testing removals: {failed}")
         return runs
 
     @staticmethod
@@ -155,6 +182,10 @@ class SafeRevokeEngine:
             for pair in alignment["aligned"]:
                 original = pair["baseline"]
                 alternate = pair["mutated"]
+                # Permission inventories/module menus provide selection evidence,
+                # not a substitute identity performing a protected operation.
+                if original.phase == "dependency":
+                    continue
                 if alternate is None or focus_grant_id not in original.grant_ids:
                     continue
                 changed_principal = original.identity != alternate.identity
@@ -187,7 +218,11 @@ class SafeRevokeEngine:
         failures = [
             workflow_id
             for workflow_id, before in baseline.items()
-            if before.success and not mutated[workflow_id].success
+            if before.success and (
+                not mutated[workflow_id].success
+                or before.output != mutated[workflow_id].output
+                or before.side_effects != mutated[workflow_id].side_effects
+            )
         ]
 
         if fallback_events:
@@ -230,6 +265,7 @@ class SafeRevokeEngine:
         return {
             "removed": [grant_id],
             "grant": asdict(grant),
+            "workflow_runs": {key: run.to_dict() for key, run in mutated.items()},
             **result,
         }
 
@@ -299,7 +335,7 @@ class SafeRevokeEngine:
         }
 
     def analyze(self) -> dict:
-        baseline = self._run_all(set())
+        baseline = self._baseline()
         singles = [
             self._single_experiment(grant_id, baseline)
             for grant_id in self.lab.grants
@@ -331,12 +367,13 @@ class SafeRevokeEngine:
             "discovered_interactions": [sorted(pair) for pair in sorted(discovered_pairs, key=lambda value: sorted(value))],
             "expected_found": len(found_expected),
             "expected_total": len(expected_pairs),
-            "recall": len(found_expected) / len(expected_pairs) if expected_pairs else 1.0,
+            "recall": len(found_expected) / len(expected_pairs) if expected_pairs else None,
             "adaptive_total_experiments": adaptive_total_tests,
             "exhaustive_total_experiments": exhaustive_total_tests,
             "experiment_reduction": reduction,
         }
         return {
+            "coverage": self._coverage(baseline, singles),
             "method": {
                 "name": "Adaptive Counterfactual Access Testing",
                 "description": "Mutate one grant, compare runtime provenance, then test only removal orders exposed by alternate paths.",
@@ -358,6 +395,23 @@ class SafeRevokeEngine:
             ],
         }
 
+    def _coverage(self, baseline: dict[str, WorkflowRun], singles: list[dict]) -> dict:
+        used = self._used_grants(baseline)
+        denied = {item["removed"][0] for item in singles}
+        return {
+            "configured_grants": len(self.lab.grants),
+            "mutation_tested_grants": sorted(denied),
+            "baseline_exercised_grants": sorted(used),
+            "baseline_unexercised_grants": sorted(set(self.lab.grants) - used),
+            "baseline_grant_coverage": len(used) / len(self.lab.grants) if self.lab.grants else 0,
+            "executed_workflows": sorted(baseline),
+            "owner_checked_workflows": sorted(
+                item.id for item in self.lab.workflows.values()
+                if item.expected_output is not None or item.expected_side_effects
+            ),
+            "scope": "Only configured workflows and their exercised branches; this is not full application coverage.",
+        }
+
     def describe_lab(self) -> dict:
         return {
             "grants": [asdict(grant) for grant in self.lab.grants.values()],
@@ -377,7 +431,7 @@ class SafeRevokeEngine:
         if grant is None:
             return None
 
-        baseline = self._run_all(set())
+        baseline = self._baseline()
         mutated = self._run_all({grant_id})
         classified = self._classify({grant_id}, baseline, mutated, grant_id)
         workflows = []
@@ -407,7 +461,7 @@ class SafeRevokeEngine:
                 for edge in classified["fallback_edges"]
             )
 
-            if before.success and not after.success:
+            if before.success and (not after.success or before.output != after.output or before.side_effects != after.side_effects):
                 outcome = "FAILED"
             elif fallback_used:
                 outcome = "FALLBACK"
@@ -444,5 +498,4 @@ class SafeRevokeEngine:
         workflow = self.lab.workflows.get(workflow_id)
         if not workflow:
             return None
-        context = ExecutionContext(workflow.id, Policy(self.lab))
-        return workflow.runner(context).to_dict()
+        return self._run_all(set())[workflow_id].to_dict()

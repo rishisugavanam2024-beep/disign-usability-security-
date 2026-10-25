@@ -1,12 +1,28 @@
-from flask import Flask, jsonify, render_template
+import os
+
+from flask import Flask, Response, jsonify, render_template
 
 from saferevoke.benchmark import run_comparative_benchmark
 from saferevoke.engine import SafeRevokeEngine
 from saferevoke.lab import build_lab
+from saferevoke.config import load_lab
+from saferevoke.shared_example import RUNNERS
+from saferevoke.report import render_html, render_json
 
 
 app = Flask(__name__)
-engine = SafeRevokeEngine(build_lab())
+config_path = os.environ.get("SAFEREVOKE_CONFIG")
+engine = SafeRevokeEngine(load_lab(config_path, RUNNERS) if config_path else build_lab())
+
+
+@app.get("/api/report/<report_format>")
+def download_report(report_format: str):
+    if report_format not in {"html", "json"}:
+        return jsonify({"error": "Choose html or json"}), 400
+    report = engine.analyze()
+    content = render_html(report) if report_format == "html" else render_json(report)
+    return Response(content, mimetype="text/html" if report_format == "html" else "application/json",
+                    headers={"Content-Disposition": f'attachment; filename="saferevoke-report.{report_format}"'})
 
 
 @app.get("/")
