@@ -6,8 +6,11 @@ The tests' existing assertions become the workflow checks. No `Workflow` wrapper
 or calls to the SafeRevoke engine are required in those tests.
 
 This is an early integration for standard, synchronous Django authentication.
-It is locally installable; it has not been published to PyPI. The name/version
-in this repository do not establish that the name is available on PyPI.
+Version 0.1.0a1 is published on PyPI under the MIT License:
+
+```shell
+python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
+```
 
 ## Install from the repository
 

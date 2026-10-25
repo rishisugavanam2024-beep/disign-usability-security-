@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0a1 — first experimental release candidate
+## 0.1.0a1 — 2026-10-26 — first experimental release
 
 - Core permission mutation and runtime provenance comparison engine.
 - Direct/group permission discovery and transaction rollback adapter for Django.
@@ -11,5 +11,6 @@
 - Configurable in-memory labs, synthetic benchmarks and Django admin examples.
 - MIT licence and installable wheel/source distributions.
 
-This is an alpha candidate. PyPI upload and real-world adoption are separate
-from local package validation.
+Published on PyPI under the MIT License. The release workflow completed
+successfully, and the public package metadata serves both wheel and source files.
+This remains an alpha; publication does not establish production reliability.

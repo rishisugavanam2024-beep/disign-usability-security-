@@ -12,7 +12,7 @@ Licensed under the MIT License.
 
 ## Install
 
-After the release is available on PyPI:
+Install the experimental release from PyPI:
 
 ```shell
 python -m pip install --pre "saferevoke[pytest]"

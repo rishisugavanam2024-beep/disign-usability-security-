@@ -2,9 +2,14 @@
 
 Licensed under the [MIT License](LICENSE).
 
-The installable `0.1.0a1` release candidate and publishing workflow are prepared.
-See [publishing instructions](docs/publishing.md) for the one-time PyPI account
-setup and final upload; GitHub availability alone does not mean it is on PyPI.
+Version [0.1.0a1 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a1/)
+under the MIT License. Install the experimental Django/pytest integration with:
+
+```shell
+python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
+```
+
+See [publishing instructions](docs/publishing.md) for future releases.
 
 SafeRevoke is a software-only research prototype for testing permission removal before a change reaches production. It includes a synthetic company portal, fake identities and data paths, an execution-based classifier, and an adaptive removal-order planner.
 
@@ -36,8 +41,7 @@ python -m pytest tests/test_refunds.py --ds=myproject.test_settings --saferevoke
 Replace the illustrative test path, settings module and grant with your project's
 own values. Test functions use their existing fixtures and assertions; they do
 not need SafeRevoke workflow wrappers. HTML/JSON reports show baseline results,
-failed assertions, remaining access and permission traces. The package has not
-been published to PyPI.
+failed assertions, remaining access and permission traces.
 
 See the [pytest integration guide](docs/pytest-integration.md) for a runnable
 four-test example, installation, report interpretation and current limitations.

@@ -1,7 +1,8 @@
 # Publishing SafeRevoke
 
-Release candidate: `0.1.0a1`, under the MIT License. Creating local distributions
-or pushing to GitHub does not itself upload a release to PyPI.
+Published release: [`0.1.0a1`](https://pypi.org/project/saferevoke/0.1.0a1/), under
+the MIT License. [First successful publishing run](https://github.com/rishisugavanam2024-beep/disign-usability-security-/actions/runs/40241389245).
+The one-time setup below is retained as a reference for maintainers.
 
 ## First publication: one-time account setup
 
