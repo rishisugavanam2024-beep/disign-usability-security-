@@ -9,7 +9,7 @@ This is an early integration for standard, synchronous Django authentication.
 Version 0.1.0a1 is published on PyPI under the MIT License:
 
 ```shell
-python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
+pip install saferevoke
 ```
 
 ## Install from the repository
@@ -17,10 +17,10 @@ python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
 From the project directory, using the Python environment that runs your tests:
 
 ```powershell
-python -m pip install ".[pytest]"
+python -m pip install .
 ```
 
-For local development use `python -m pip install -e ".[pytest]"` instead.
+For local development use `python -m pip install -e .` instead.
 The package's `pytest11` entry point registers the plugin automatically.
 Installing it does not enable permission mutation: ordinary pytest runs are unchanged.
 
@@ -29,7 +29,7 @@ Installing it does not enable permission mutation: ordinary pytest runs are unch
 From this checkout:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -e ".[pytest]"
+.\.venv\Scripts\python.exe -m pip install -e .
 .\.venv\Scripts\python.exe -m pytest examples/django_pytest --ds=examples.django_pytest.settings -q
 ```
 
@@ -169,8 +169,9 @@ the included admin tests demonstrate task failures and duplicate access.
 .\.venv\Scripts\python.exe -m pip wheel --no-deps . --wheel-dir dist
 ```
 
-The core package contains the engine and plugin. Flask is an optional `web` extra;
-Django/pytest support is the `pytest` extra. The examples and web template files
+The package contains the engine and plugin. Starting with 0.1.0a2, Django, pytest
+and pytest-django are installed by default; the `pytest` extra remains as a
+compatibility alias. Flask is an optional `web` extra. The examples and web template files
 remain in the repository and are not shipped as library modules in the wheel.
 
 References: [pytest plugin entry points](https://docs.pytest.org/en/stable/how-to/writing_plugins.html)

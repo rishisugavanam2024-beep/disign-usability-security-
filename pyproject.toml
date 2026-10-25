@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "saferevoke"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "Experimental permission-removal testing for Python applications"
 readme = "PACKAGE_README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["pytest>=8,<10", "pytest-django>=4.8,<5", "Django>=5.2,<5.3"]
 license = "MIT"
 license-files = ["LICENSE"]
 keywords = ["django", "pytest", "permissions", "authorization", "security", "testing"]
@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-pytest = ["pytest>=8,<10", "pytest-django>=4.8,<5", "Django>=5.2,<5.3"]
+pytest = []
 web = ["Flask==3.1.2"]
 
 [project.entry-points.pytest11]

@@ -6,7 +6,7 @@ SafeRevoke helps developers investigate what changes when an access grant is
 removed. Its pytest plugin reuses existing Django test fixtures and assertions,
 records actual authorization decisions, and generates HTML/JSON findings.
 
-Version **0.1.0a1** is an early alpha. Support currently covers serial, synchronous
+Version **0.1.0a2** is an early alpha. Support currently covers serial, synchronous
 pytest-django tests using Django 5.2's standard user/group authorization backend.
 Licensed under the MIT License.
 
@@ -15,14 +15,18 @@ Licensed under the MIT License.
 Install the experimental release from PyPI:
 
 ```shell
-python -m pip install --pre "saferevoke[pytest]"
+pip install saferevoke
 ```
 
 For development from the repository:
 
 ```shell
-python -m pip install -e ".[pytest]"
+python -m pip install -e .
 ```
+
+This installs Django, pytest and pytest-django automatically. The older
+`saferevoke[pytest]` form remains compatible. Flask for the repository's demo
+website is a separate optional `web` extra.
 
 The plugin registers automatically. Permission mutation is disabled until
 `--saferevoke` is supplied; installing it does not enable mutation in ordinary tests.

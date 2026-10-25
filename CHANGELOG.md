@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0a2 — 2026-10-26 — simpler installation
+
+- Install the working Django/pytest integration with `pip install saferevoke`.
+- Django, pytest and pytest-django are now default dependencies.
+- Preserve `saferevoke[pytest]` as a compatible alias; Flask remains optional.
+- The project remains experimental and mutation remains explicitly opt-in.
+
 ## 0.1.0a1 — 2026-10-26 — first experimental release
 
 - Core permission mutation and runtime provenance comparison engine.

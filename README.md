@@ -6,7 +6,7 @@ Version [0.1.0a1 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0
 under the MIT License. Install the experimental Django/pytest integration with:
 
 ```shell
-python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
+pip install saferevoke
 ```
 
 See [publishing instructions](docs/publishing.md) for future releases.
@@ -31,7 +31,7 @@ The research contribution to investigate is the combination of runtime fallback 
 ## Run your existing Django tests with permission removal
 
 The repository now builds an installable Python package with an opt-in pytest
-plugin. Install locally with `python -m pip install ".[pytest]"`. Ordinary test
+plugin. Install locally with `python -m pip install .`. Ordinary test
 runs remain unchanged. To repeat selected tests under a real group-grant removal:
 
 ```powershell
