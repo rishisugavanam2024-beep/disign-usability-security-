@@ -1,8 +1,7 @@
 # Additional application integrations
 
-These connectors have been added locally to the source tree. They are not yet a
-new PyPI release. Existing package metadata and the release workflow were left
-unchanged while the current release is being handled separately.
+These connectors are included in the published experimental 0.1.0a3 release.
+The validation and configuration limits for each integration are listed below.
 
 SafeRevoke can now drive several kinds of applications, but installing a package
 does not discover an arbitrary application's permissions or business workflows.

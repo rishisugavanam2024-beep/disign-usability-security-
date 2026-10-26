@@ -1,6 +1,8 @@
 # 0.1.0a3 release validation
 
-This candidate remains experimental. Publication is separate from local checks.
+Version 0.1.0a3 is published and remains experimental. All remote gates and the
+upload passed in [release run 40256574800](https://github.com/rishisugavanam2024-beep/disign-usability-security-/actions/runs/40256574800).
+Installation of the published PyPI package and its console command was also verified.
 
 ## Local evidence
 

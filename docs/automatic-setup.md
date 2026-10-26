@@ -3,7 +3,7 @@
 See [short terminal commands](commands.md) to use `saferevoke inspect`,
 `saferevoke setup` and `saferevoke test` after installing the local source.
 
-These are local source additions, not a new published package version. They reduce
+These features are available in the published 0.1.0a3 release. They reduce
 setup for supported applications. A developer still connects the actual test
 permission store once; the SDK cannot infer arbitrary database write operations.
 

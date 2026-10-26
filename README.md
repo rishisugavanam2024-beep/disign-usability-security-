@@ -2,16 +2,14 @@
 
 Licensed under the [MIT License](LICENSE).
 
-The source prepares experimental **0.1.0a3**, with short commands, Flask test reuse,
-setup discovery, additional adapters and optional Docker test databases. See the
-[current package guide](PACKAGE_README.md). Publication of these additions is not
-confirmed until the gated publishing workflow succeeds.
-
-Version [0.1.0a1 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a1/)
-under the MIT License. Install the experimental Django/pytest integration with:
+Version [0.1.0a3 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a3/),
+with short commands, Flask test reuse, setup discovery, adapters and optional
+Docker test databases. It remains an experimental alpha under MIT. See the
+[package guide](PACKAGE_README.md) and [successful release checks](https://github.com/rishisugavanam2024-beep/disign-usability-security-/actions/runs/40256574800).
 
 ```shell
-pip install saferevoke
+pip install --upgrade saferevoke
+saferevoke --help
 ```
 
 See [publishing instructions](docs/publishing.md) for future releases.

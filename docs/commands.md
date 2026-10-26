@@ -1,14 +1,14 @@
 # Short commands
 
-The local package now installs a `saferevoke` terminal command. Activate the
-virtual environment and install the current repository once:
+Version 0.1.0a3 installs the `saferevoke` terminal command. Activate your virtual
+environment and install or upgrade the published package:
 
 ```bash
-pip install -e .
+pip install --upgrade saferevoke
 ```
 
-These changes are not published to PyPI yet. An older installed release will not
-have this command until upgraded to a release containing it.
+Earlier releases need upgrading to obtain the short command. Source development
+can alternatively use `pip install -e .` from the repository.
 
 | Command | Action |
 | --- | --- |

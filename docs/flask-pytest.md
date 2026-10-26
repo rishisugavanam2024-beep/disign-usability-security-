@@ -3,7 +3,7 @@
 This local source addition reduces integration work: keep ordinary synchronous
 pytest tests and assertions, add a fixture describing the application's permission
 inventory/reset hooks, and rerun those tests under permission removal. You do not
-need to rewrite them as SDK workflow runners. This feature is not published yet.
+need to rewrite them as SDK workflow runners. This is available in 0.1.0a3.
 
 The [automatic setup and test command](automatic-setup.md) can now discover test
 fixtures and exercised grants, then run these variants without typed target IDs.

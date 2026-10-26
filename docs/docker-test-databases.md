@@ -6,8 +6,8 @@ See [command setup](commands.md) for local installation and aliases.
 The local SDK now supplies a Docker database lifecycle helper for PostgreSQL and
 MySQL. It works independently of Django or Flask: Python, Java, Node.js, PHP and
 other application test commands can receive the new database's connection values.
-This feature is not yet published. Docker contract tests are included; real-server
-verification remains pending when the local Docker engine is unavailable.
+This feature is published in 0.1.0a3. Real PostgreSQL/MySQL checks and the Docker
+contract suite passed in the release CI. A local run still needs a reachable engine.
 
 ## Run a test command with a fresh database
 
