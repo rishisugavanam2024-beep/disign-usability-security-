@@ -2,6 +2,11 @@
 
 Licensed under the [MIT License](LICENSE).
 
+The source prepares experimental **0.1.0a3**, with short commands, Flask test reuse,
+setup discovery, additional adapters and optional Docker test databases. See the
+[current package guide](PACKAGE_README.md). Publication of these additions is not
+confirmed until the gated publishing workflow succeeds.
+
 Version [0.1.0a1 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a1/)
 under the MIT License. Install the experimental Django/pytest integration with:
 

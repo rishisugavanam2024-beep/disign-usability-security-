@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0a3 — release candidate
+
+- Short `saferevoke inspect/setup/test/db` commands and package console entry point.
+- Existing Flask pytest baselines, grant-removal variants and cleanup verification.
+- Source-only setup discovery, registered-store wiring and exercised-grant selection.
+- Generic, Flask/FastAPI, command/HTTP and provider-store connector boundaries.
+- SQLite backup/restore and optional disposable Docker database helpers.
+- Pinned upstream Flaskr edit/delete validation using original application tests.
+- Cross-platform Python CI, live Docker job and clean wheel installation gate.
+- Features remain experimental; live provider-account verification is pending.
+
 ## 0.1.0a2 — 2026-10-26 — simpler installation
 
 - Install the working Django/pytest integration with `pip install saferevoke`.

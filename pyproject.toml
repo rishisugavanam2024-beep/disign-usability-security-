@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "saferevoke"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = "Experimental permission-removal testing for Python applications"
 readme = "PACKAGE_README.md"
 requires-python = ">=3.10"
@@ -26,13 +26,17 @@ classifiers = [
 [project.optional-dependencies]
 pytest = []
 web = ["Flask==3.1.2"]
+test = ["Flask>=3.1,<4", "fastapi>=0.115,<1", "httpx>=0.28,<0.29", "starlette>=0.46,<1"]
+
+[project.scripts]
+saferevoke = "saferevoke.__main__:main"
 
 [project.entry-points.pytest11]
 saferevoke = "saferevoke.pytest_plugin"
 
 [project.urls]
 Repository = "https://github.com/rishisugavanam2024-beep/disign-usability-security-"
-Documentation = "https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/pytest-integration.md"
+Documentation = "https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/commands.md"
 Issues = "https://github.com/rishisugavanam2024-beep/disign-usability-security-/issues"
 
 [tool.setuptools.packages.find]

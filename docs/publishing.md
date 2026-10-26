@@ -1,5 +1,16 @@
 # Publishing SafeRevoke
 
+The source now prepares **0.1.0a3**. Publication remains gated on the Windows/Linux
+Python verification matrix, live Docker checks, pinned upstream application test,
+distribution validation and clean wheel installation. A locally passing run does
+not mean those remote checks or the PyPI upload have completed.
+
+For an existing project, configure the GitHub trusted publisher in that project's
+Publishing settings. An account-level **pending publisher** is only for creating
+a new project and does not authorize updates to an already-created project. Use
+the same repository/workflow/environment values listed below. Do not dispatch
+another upload to work around a publisher authentication failure.
+
 Published release: [`0.1.0a1`](https://pypi.org/project/saferevoke/0.1.0a1/), under
 the MIT License. [First successful publishing run](https://github.com/rishisugavanam2024-beep/disign-usability-security-/actions/runs/40241389245).
 The one-time setup below is retained as a reference for maintainers.
@@ -34,10 +45,11 @@ A push to `main` only validates/builds; it does not publish automatically.
 Manual runs with **publish** false also only validate/build.
 
 After a successful publish job, verify the actual project and version at
-<https://pypi.org/project/saferevoke/0.1.0a1/>. Then test in a fresh environment:
+<https://pypi.org/project/saferevoke/0.1.0a3/> for this candidate. Then test in a fresh environment:
 
 ```powershell
-python -m pip install --pre "saferevoke[pytest]==0.1.0a1"
+python -m pip install "saferevoke==0.1.0a3"
+saferevoke --help
 ```
 
 Do not announce publication until the publish job succeeds and PyPI serves the
