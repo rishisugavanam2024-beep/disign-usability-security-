@@ -37,7 +37,7 @@ def main():
             raise RuntimeError("Console entry point did not inspect its actual working directory")
         code = ("from importlib.metadata import version; from pathlib import Path; "
                 "import saferevoke; "
-                "assert version('saferevoke') == saferevoke.__version__ == '0.1.0a3'; "
+                "assert version('saferevoke') == saferevoke.__version__ == '0.1.0a4'; "
                 "assert 'site-packages' in str(Path(saferevoke.__file__)); "
                 "from saferevoke.docker_database import DockerDatabase; "
                 "from saferevoke.adapters.providers import Auth0PermissionStore; "

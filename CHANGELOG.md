@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0a4 — 2026-10-27
+
+- Native external connector commands: connector, permissions, revoke, grant/restore,
+  baseline, test and report, configured with trusted local saferevoke.json hooks.
+- External test uses SafeRevokeEngine directly and writes HTML/JSON only after
+  successful execution, evidence checks and cleanup; baseline validates without removals.
+- Complete command inventory in --help, detailed options/examples in --help-all,
+  and --version. Existing inspect/setup, Flask, Django pytest and database/db remain.
+- Help and report discovery never import connector code. Configuration paths,
+  test opt-in, grant limits and incomplete report handling are validated.
+
 ## 0.1.0a3 — 2026-10-26 — published
 
 - Short `saferevoke inspect/setup/test/db` commands and package console entry point.

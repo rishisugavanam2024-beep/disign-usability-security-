@@ -73,6 +73,10 @@ class SafeRevokeEngine:
             for grant_id in event.grant_ids
         }
 
+    def baseline(self) -> dict:
+        """Run and validate all workflows with reset, without removing permissions."""
+        return {name: run.to_dict() for name, run in self._baseline().items()}
+
     @staticmethod
     def _event_paths(run: WorkflowRun) -> set[tuple[str, str, str]]:
         return {

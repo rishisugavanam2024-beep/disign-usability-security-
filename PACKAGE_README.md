@@ -6,7 +6,7 @@ SafeRevoke helps developers investigate what changes when an access grant is
 removed. Its integrations reuse existing test fixtures and assertions, record
 authorization decisions, and generate HTML/JSON findings.
 
-Version **0.1.0a3** is an experimental alpha under MIT. Django and Flask have
+Version **0.1.0a4** is an experimental alpha under MIT. Django and Flask have
 existing-test integrations; other stacks require explicit connectors. Installing
 the library does not connect arbitrary websites or enable permission mutation.
 
@@ -142,3 +142,27 @@ that production permission removal is safe.
 - [Installation, runnable example and compatibility](https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/pytest-integration.md)
 - [Django adapter](https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/django-integration.md)
 - [Source and issue tracker](https://github.com/rishisugavanam2024-beep/disign-usability-security-)
+
+
+## External applications and the full CLI
+
+` saferevoke --help ` lists every command and alias, regardless of the configured
+application. `saferevoke --help-all` includes all options and examples.
+
+```shell
+saferevoke --version
+saferevoke connector
+saferevoke permissions alice
+saferevoke revoke alice WRITE
+saferevoke grant alice WRITE
+saferevoke baseline
+saferevoke test
+saferevoke report --open
+```
+
+These commands use explicit application-owned `saferevoke.json` configuration and
+trusted Python hooks. Java/Node/custom apps supply a Lab and adapter; the published
+library runs SafeRevokeEngine and renders the report. Help/report discovery does
+not execute application code. Controls require test-environment opt-in; they are
+not an authorization server and do not automatically connect arbitrary websites.
+See [the connector contract](https://github.com/rishisugavanam2024-beep/disign-usability-security-/blob/main/docs/external-connectors.md).
