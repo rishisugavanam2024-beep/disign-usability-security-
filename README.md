@@ -2,7 +2,7 @@
 
 Licensed under the [MIT License](LICENSE).
 
-Version [0.1.0a3 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a3/),
+Version [0.1.0a4 is published on PyPI](https://pypi.org/project/saferevoke/0.1.0a4/),
 with short commands, Flask test reuse, setup discovery, adapters and optional
 Docker test databases. It remains an experimental alpha under MIT. See the
 [package guide](PACKAGE_README.md) and [successful release checks](https://github.com/rishisugavanam2024-beep/disign-usability-security-/actions/runs/40256574800).
@@ -13,6 +13,14 @@ saferevoke --help
 ```
 
 See [publishing instructions](docs/publishing.md) for future releases.
+
+## Dibsly demonstration site
+
+The complete Java reverse-marketplace demonstration is in [dibsly/](dibsly/).
+It is an independent application that uses a SafeRevoke external connector for
+disposable permission-removal analysis. Start with
+[dibsly/PYTHON-LIBRARY-DEMO.md](dibsly/PYTHON-LIBRARY-DEMO.md) for the
+examiner walkthrough and [dibsly/README.md](dibsly/README.md) to run the site.
 
 SafeRevoke is a software-only research prototype for testing permission removal before a change reaches production. It includes a synthetic company portal, fake identities and data paths, an execution-based classifier, and an adaptive removal-order planner.
 

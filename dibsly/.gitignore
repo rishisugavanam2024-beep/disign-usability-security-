@@ -1,0 +1,15 @@
+/target/
+/safe-revoke/target/
+/safe-revoke/
+/data/
+/.tools/
+/.impeccable/review/
+/build-local.cmd
+/dist/
+/.local/
+/reports/python-saferevoke/
+/tools/run-detector.cmd
+/.env
+*.log
+*.mv.db
+*.trace.db

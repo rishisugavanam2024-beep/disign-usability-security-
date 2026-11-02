@@ -1,0 +1,61 @@
+let playwright;
+try { playwright = require('playwright'); } catch { playwright = require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/santh/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'); }
+const {chromium} = playwright;
+const fs = require('fs');
+(async () => {
+  const browser = await chromium.launch({headless:true, channel:'msedge', args:['--disable-gpu']});
+  const out = '.impeccable/review'; fs.mkdirSync(out,{recursive:true});
+  const results=[];
+  for(const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
+    const page = await browser.newPage({viewport, reducedMotion:'reduce'});
+    const errors=[]; page.on('pageerror', error=>errors.push(error.message));
+    await page.goto('http://localhost:8092/',{waitUntil:'networkidle'});
+    if(viewport.width < 760) { await page.getByRole('button',{name:'Menu',exact:true}).click(); if(!await page.getByRole('navigation',{name:'Main navigation'}).isVisible()) throw Error('Mobile menu did not open'); await page.keyboard.press('Escape'); }
+    await page.screenshot({path:`${out}/${viewport.width===1440?'desktop':'mobile'}.png`,fullPage:true});
+    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+    await page.getByRole('button',{name:/Priya Shah/}).click();
+    const preview=await page.locator('#preview-support').innerText();
+    await page.goto('http://localhost:8092/explore',{waitUntil:'networkidle'});
+    await page.screenshot({path:`${out}/explore-${viewport.width}.png`,fullPage:true});
+    await page.getByLabel('Search projects').fill('Java');
+    await page.getByRole('button',{name:'Find projects'}).click();
+    await page.waitForLoadState('networkidle');
+    const found=await page.locator('.project-card').count();
+    await page.goto('http://localhost:8092/register',{waitUntil:'networkidle'});
+    await page.screenshot({path:`${out}/register-${viewport.width}.png`,fullPage:true});
+    await page.goto('http://localhost:8092/login',{waitUntil:'networkidle'});
+    await page.screenshot({path:`${out}/login-${viewport.width}.png`,fullPage:true});
+    await page.getByLabel('Username',{exact:true}).fill('client.demo');
+    await page.getByLabel('Password',{exact:true}).fill('DibslyDemo2026!');
+    await page.getByRole('button',{name:'Log in',exact:true}).click();
+    await page.waitForURL('**/app/dashboard');
+    await page.screenshot({path:`${out}/workspace-${viewport.width}.png`,fullPage:true});
+    const workspaceOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+    await page.getByRole('button',{name:'Completed',exact:true}).click();
+    if(!await page.locator('#workspace-empty').isVisible()) throw Error('Empty-state filter failed');
+    await page.goto('http://localhost:8092/app/new',{waitUntil:'networkidle'});
+    await page.getByLabel('Give your project a clear title').fill('A thoughtful sample brief');
+    await page.reload({waitUntil:'networkidle'});
+    if(await page.getByLabel('Give your project a clear title').inputValue() !== 'A thoughtful sample brief') throw Error('Draft recovery failed');
+    await page.screenshot({path:`${out}/new-${viewport.width}.png`,fullPage:true});
+    await page.goto('http://localhost:8092/project?id=1',{waitUntil:'networkidle'});
+    await page.screenshot({path:`${out}/project-${viewport.width}.png`,fullPage:true});
+    const projectOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+    const amount = await page.locator('.budget-panel>strong').innerText();
+    if(!amount.startsWith('₹')) throw Error('Currency encoding failed: '+amount);
+    const mojibake = await page.locator('body').innerText();
+    if(mojibake.includes('Â') || mojibake.includes('â‚')) throw Error('Text encoding error');
+    const admin = await browser.newPage({viewport,reducedMotion:'reduce'});
+    await admin.goto('http://localhost:8092/login',{waitUntil:'networkidle'});
+    await admin.getByLabel('Username',{exact:true}).fill('admin'); await admin.getByLabel('Password',{exact:true}).fill('DibslyAdmin2026!');
+    await admin.getByRole('button',{name:'Log in',exact:true}).click(); await admin.waitForURL('**/app/dashboard');
+    await admin.goto('http://localhost:8092/app/access',{waitUntil:'networkidle'});
+    await admin.screenshot({path:`${out}/access-${viewport.width}.png`,fullPage:true});
+    const accessOverflow=await admin.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+    await admin.close();
+    results.push({viewport,overflow,workspaceOverflow,projectOverflow,accessOverflow,preview,found,amount,errors});
+    await page.close();
+  }
+  fs.writeFileSync(`${out}/browser-results.json`,JSON.stringify(results,null,2));
+  console.log(JSON.stringify(results,null,2)); await browser.close();
+})().catch(error=>{console.error(error);process.exit(1)});

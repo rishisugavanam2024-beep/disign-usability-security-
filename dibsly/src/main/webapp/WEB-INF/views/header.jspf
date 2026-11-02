@@ -1,0 +1,28 @@
+<%@ page pageEncoding="UTF-8" import="java.util.*,java.time.*,java.net.URLEncoder,java.nio.charset.StandardCharsets,com.resolvebid.web.Html,com.resolvebid.model.*,com.resolvebid.service.DemoData" %>
+<%!
+  private String e(Object value) { return Html.escape(value); }
+  private String val(jakarta.servlet.http.HttpServletRequest req, String name) { return e(req.getParameter(name)); }
+  private String money(java.math.BigDecimal amount) { java.text.NumberFormat f = java.text.NumberFormat.getNumberInstance(java.util.Locale.forLanguageTag("en-IN")); f.setMaximumFractionDigits(2); return "\u20b9" + f.format(amount); }
+  private String roleLabel(Role role) { return role == Role.CUSTOMER ? "Client" : role == Role.PROVIDER ? "Freelancer" : "Administrator"; }
+  private String stateLabel(RequestStatus state) { switch(state) { case OPEN: return "Open for pitches"; case BOOKED: return "In progress"; case COMPLETED: return "Completed"; default: return "Closed"; } }
+  private String url(String value) { return URLEncoder.encode(value, StandardCharsets.UTF_8); }
+  private String arrow() { return "<svg class='icon' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' aria-hidden='true'><path d='M5 12h14m-6-6 6 6-6 6'/></svg>"; }
+%>
+<%
+  UserAccount viewer = (UserAccount)request.getAttribute("user");
+  if(viewer == null && request.getSession(false) != null) viewer = (UserAccount)request.getSession(false).getAttribute("resolvebid.user");
+  String token = (String)request.getAttribute("csrf");
+  String base = request.getContextPath();
+%>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title><%=e(request.getAttribute("pageTitle") == null ? "Dibsly — Your gig. Their pitch. Your pick." : request.getAttribute("pageTitle"))%></title>
+<meta name="description" content="Post your project. Compare thoughtful freelance pitches by scope, price, and delivery. Find your next collaboration on Dibsly.">
+<meta name="theme-color" content="#f7f5ef"><link rel="icon" href="<%=base%>/assets/brand.svg" type="image/svg+xml">
+<link rel="stylesheet" href="<%=base%>/assets/app.css"><script defer src="<%=base%>/assets/app.js"></script></head><body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="nav-wrap"><a class="brand" href="<%=base%>/" aria-label="Dibsly home"><img src="<%=base%>/assets/brand.svg" alt="" width="32" height="32">dibsly<span class="brand-dot">.</span></a>
+<button class="menu-toggle secondary" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
+<nav id="main-nav" aria-label="Main navigation"><a href="<%=base%>/explore">Find work</a><a href="<%=base%>/how-it-works">How it works</a>
+<% if(viewer != null) { %><a href="<%=base%>/app/dashboard">My workspace</a><% if(viewer.role() == Role.ADMIN){ %><a href="<%=base%>/app/access">Account access</a><% } %><form class="inline" method="post" action="<%=base%>/logout"><input type="hidden" name="csrf" value="<%=e(token)%>"><button class="text-button" type="submit">Sign out</button></form>
+<% } else { %><a class="login-link" href="<%=base%>/login">Log in</a><a class="button small" href="<%=base%>/register?role=CUSTOMER">Post a project <%=arrow()%></a><% } %></nav></div></header>
+<% if(DemoData.enabled()){ %><div class="demo-banner">Demo workspace · Projects and people are fictional. <a href="<%=base%>/login">Try a demo account</a></div><% } %>

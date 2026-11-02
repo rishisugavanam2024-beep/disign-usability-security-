@@ -1,0 +1,13 @@
+target
+data
+.tools
+.git
+.settings
+*.launch
+*.zip
+.env
+.impeccable
+verification
+dist
+tools
+build-local.cmd

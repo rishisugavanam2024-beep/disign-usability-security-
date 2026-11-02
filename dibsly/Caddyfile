@@ -1,0 +1,7 @@
+{$SITE_ADDRESS} {
+    encode zstd gzip
+    request_body {
+        max_size 32KB
+    }
+    reverse_proxy app:8090
+}
